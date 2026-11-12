@@ -25,7 +25,11 @@ def ewma_variance(
         raise ValueError("initial_variance must be finite and positive")
     result = np.empty(values.size + 1, dtype=float)
     result[0] = initial
-    for index, value in enumerate(values):
-        result[index + 1] = decay * result[index] + (1.0 - decay) * value**2
+    try:
+        with np.errstate(over="raise", invalid="raise"):
+            for index, value in enumerate(values):
+                result[index + 1] = decay * result[index] + (1.0 - decay) * value**2
+    except FloatingPointError as error:
+        raise ValueError("variance recursion exceeds the finite float range") from error
     return result
 

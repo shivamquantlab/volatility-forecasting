@@ -18,3 +18,8 @@ def test_rejects_invalid_decay_and_zero_initial_variance():
     with pytest.raises(ValueError, match="positive"):
         ewma_variance(np.array([0.1, 0.2]), initial_variance=0.0)
 
+
+def test_variance_overflow_is_reported_as_invalid_input():
+    with pytest.raises(ValueError, match="finite float range"):
+        ewma_variance(np.array([1e200]))
+
